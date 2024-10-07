@@ -17,6 +17,8 @@ namespace Board_service
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
+            services.AddProblemDetails();
+            services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Board_service", Version = "v1" });

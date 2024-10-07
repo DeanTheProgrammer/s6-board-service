@@ -16,6 +16,7 @@ namespace Board_service.Handler.CustomExtensions
                     configuration
                         .ReadFrom.Configuration(context.Configuration)
                         .ReadFrom.Services(services)
+                        .Enrich.WithProperty("Application", "Board-service")
                         .Enrich.FromLogContext()
                         .Enrich.WithClientIp(headerName: "CF-Connection-IP")
                         .Enrich.WithCorrelationId(headerName: "correclation-id", addValueIfHeaderAbsence: true)

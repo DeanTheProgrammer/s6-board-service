@@ -12,9 +12,9 @@ namespace Board_service.Handler.StartupHandler
             return Host.CreateDefaultBuilder(args) // Fixed: Added return statement
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                    config.AddUserSecrets<Program>();
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                     config.AddEnvironmentVariables();
+                    config.AddUserSecrets<Program>();
                     config.AddCommandLine(args);
                 })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })

@@ -5,10 +5,9 @@
         public static IConfiguration BuildConfiguration(string[] args)
         {
             IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddUserSecrets<Startup>()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
+                .AddUserSecrets<Program>()
                 .AddCommandLine(args)
                 .Build();
 
