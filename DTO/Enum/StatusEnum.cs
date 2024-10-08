@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DTO.Enum
+{
+    public enum StatusEnum
+    {
+        ToDo = 1,
+        InProgress = 2,
+        OnHold = 3,
+        Done = 4
+    }
+}

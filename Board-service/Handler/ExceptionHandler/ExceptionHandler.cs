@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Diagnostics;
+using Serilog;
 
 namespace Board_service.Handler.ExceptionHandler
 {
@@ -17,16 +19,24 @@ namespace Board_service.Handler.ExceptionHandler
                 ToUse = exception.InnerException;
             }
 
-            switch (exception)
+            switch (ToUse)
             {
                 case MissingFieldException missingFieldException:
                     httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-                    ResponseMessage = "You made a bad request";
+                    ResponseMessage = "You where missing a field";
+                    UserException(missingFieldException);
+                    break;
+
+                case ValidationException validationException:
+                    httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+                    ResponseMessage = validationException.Message;
+                    UserException(validationException);
                     break;
 
                 default:
                     httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                    ResponseMessage = "Internal Server error, Hi Welcome";
+                    ResponseMessage = "Internal Server error";
+                    SystemException(ToUse);
                     break;
             }
 
@@ -40,6 +50,17 @@ namespace Board_service.Handler.ExceptionHandler
 
 
             return ErrorHanled;
+        }
+
+        private void UserException(Exception ex)
+        {
+            Log.Information("A user generated a Exception", ex);
+
+        }
+
+        private void SystemException(Exception ex)
+        {
+            Log.Error("A system generated a Exception", ex);
         }
     }
 }
