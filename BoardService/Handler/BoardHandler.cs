@@ -11,12 +11,12 @@ namespace BoardService.Handler
     public class BoardHandler
     {
         private readonly BoardDSInterface _boardDsInterface;
-        private readonly InviteDSInterface _InviteDsInterface;
+        //private readonly InviteDSInterface _InviteDsInterface;
 
-        public BoardHandler(BoardDSInterface boardDsInterface, InviteDSInterface InviteDsInterface)
+        public BoardHandler(BoardDSInterface boardDsInterface, InviteDSInterface? InviteDsInterface)
         {
             _boardDsInterface = boardDsInterface;
-            _InviteDsInterface = InviteDsInterface;
+            //_InviteDsInterface = InviteDsInterface;
         }
 
         public async Task<BoardDTO> CreateBoard(string UserId, string Name, string? Description)

@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BoardService.Interface;
+using InfraMongoDB;
+using InfraMongoDB.Infra;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +22,10 @@ namespace Board_service
             services.AddEndpointsApiExplorer();
             services.AddProblemDetails();
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
+
+            MongoDBSettings MongoDBSettings = new MongoDBSettings();
+            Configuration.GetSection("MongoDB").Bind(MongoDBSettings);
+            services.AddSingleton<BoardDSInterface>(new BoardInfrastructure(MongoDBSettings));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Board_service", Version = "v1" });
