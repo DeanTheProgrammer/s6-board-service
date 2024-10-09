@@ -22,7 +22,6 @@ namespace Board_service
             services.AddEndpointsApiExplorer();
             services.AddProblemDetails();
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
-
             MongoDBSettings MongoDBSettings = new MongoDBSettings();
             Configuration.GetSection("MongoDB").Bind(MongoDBSettings);
             services.AddSingleton<BoardDSInterface>(new BoardInfrastructure(MongoDBSettings));
@@ -44,6 +43,8 @@ namespace Board_service
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            app.UseExceptionHandler();
 
             app.UseEndpoints(endpoints =>
             {

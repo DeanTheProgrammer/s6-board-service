@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using BoardService.Interface;
 using DTO;
+using DTO.DTO_s.Board;
 using DTO.Enum;
 using Models.Enum;
 using Models.Models;
@@ -19,14 +20,14 @@ namespace BoardService.Handler
             //_InviteDsInterface = InviteDsInterface;
         }
 
-        public async Task<BoardDTO> CreateBoard(string UserId, string Name, string? Description)
+        public async Task<BoardDTO> CreateBoard(string UserId, CreateBoardDTO Board)
         {
-            if (String.IsNullOrEmpty(Name))
+            if (String.IsNullOrEmpty(Board.Name))
             {
                 throw new ValidationException("Name cannot be null");
             }
 
-            string Id = await _boardDsInterface.CreateBoard(UserId, Name, Description);
+            string Id = await _boardDsInterface.CreateBoard(UserId, Board.Name, Board.Description);
             BoardModel boardModel = await _boardDsInterface.GetBoard(Id);
 
             return MapBoardModelToDTO(boardModel);
