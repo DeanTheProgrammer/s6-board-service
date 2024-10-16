@@ -13,5 +13,7 @@ namespace DTO
         public List<UserDTO> Users { get; set; }
         public List<ColumnsDTO> Columns { get; set; }
         public List<StatusDTO> Status { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 }

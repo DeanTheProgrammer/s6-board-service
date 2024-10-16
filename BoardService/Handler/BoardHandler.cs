@@ -27,110 +27,31 @@ namespace BoardService.Handler
                 throw new ValidationException("Name cannot be null");
             }
 
-            string Id = await _boardDsInterface.CreateBoard(UserId, Board.Name, Board.Description);
-            BoardModel boardModel = await _boardDsInterface.GetBoard(Id);
+            string Id = await _boardDsInterface.CreateBoard(UserId, Board);
+            BoardDTO result = await _boardDsInterface.GetBoard(Id, UserId);
 
-            return MapBoardModelToDTO(boardModel);
+            return result;
         }
 
-
-
-        private BoardDTO MapBoardModelToDTO(BoardModel boardModel)
+        public async Task<BoardDTO> GetBoard(string BoardId, string UserId)
         {
-            BoardDTO boardDTO = new BoardDTO()
-            {
-                Id = boardModel.Id.ToString(),
-                Name = boardModel.Name,
-                Description = boardModel.Description,
-                CreatedBy = boardModel.CreatedBy,
-                CreatedAt = boardModel.CreatedAt,
-                Updates = MapUpdateModelToDTO(boardModel.Updates),
-                Users = MapUserModelToDTO(boardModel.Users),
-                Columns = MapColumnsModelToDTO(boardModel.Columns),
-                Status = MapStatusModelToDTO(boardModel.Status)
-            };
-
-            return boardDTO;
+            return await _boardDsInterface.GetBoard(BoardId, UserId);
         }
 
-        private List<UpdateDTO> MapUpdateModelToDTO(List<UpdateModel> updateModels)
+        public async Task<List<BoardDTO>> GetBoards(string UserId)
         {
-            List<UpdateDTO> updateDTOs = new List<UpdateDTO>();
-
-            foreach (var update in updateModels)
-            {
-                UpdateDTO updateDTO = new UpdateDTO()
-                {
-                    Id = update.Id.ToString(),
-                    Description = update.Description,
-                    Name = update.Name,
-                    TimeStamp = update.TimeStamp,
-                    ByUserId = update.ByUserId
-                };
-
-                updateDTOs.Add(updateDTO);
-            }
-
-            return updateDTOs;
+            return await _boardDsInterface.GetBoards(UserId);
         }
-        private List<UserDTO> MapUserModelToDTO(List<UserModel> userModels)
+
+        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId, string UserId)
         {
-            List<UserDTO> userDTOs = new List<UserDTO>();
-
-            foreach (var user in userModels)
-            {
-                UserDTO userDTO = new UserDTO()
-                {
-                    Id = user.Id.ToString(),
-                    Role = (DTO.Enum.BoardRoleEnum)user.Role,
-                    Nickname = user.Nickname,
-                    TeamRole = user.TeamRole
-                };
-
-                userDTOs.Add(userDTO);
-            }
-
-            return userDTOs;
+            return await _boardDsInterface.GetSmallBoard(BoardId, UserId);
         }
 
-        private List<ColumnsDTO> MapColumnsModelToDTO(List<ColumnsModel> columnsModels)
+        public async Task<List<SmallBoardDTO>> GetSmallBoards(string UserId)
         {
-            List<ColumnsDTO> columnsDTOs = new List<ColumnsDTO>();
-
-            foreach (var column in columnsModels)
-            {
-                ColumnsDTO columnsDTO = new ColumnsDTO()
-                {
-                    Id = column.Id.ToString(),
-                    Name = column.Name,
-                    Description = column.Description,
-                    OrderNumber = column.OrderNumber,
-                    StatusId = column.StatusId.ToString()
-                };
-
-                columnsDTOs.Add(columnsDTO);
-            }
-
-            return columnsDTOs;
+            return await _boardDsInterface.GetSmallBoards(UserId);
         }
-        private List<StatusDTO> MapStatusModelToDTO(List<StatusModel> statusModels)
-        {
-            List<StatusDTO> statusDTOs = new List<StatusDTO>();
 
-            foreach (var status in statusModels)
-            {
-                StatusDTO statusDTO = new StatusDTO()
-                {
-                    Id = status.Id.ToString(),
-                    Name = status.Name,
-                    Description = status.Description,
-                    Status = (DTO.Enum.StatusEnum)status.Status
-                };
-
-                statusDTOs.Add(statusDTO);
-            }
-
-            return statusDTOs;
-        }
     }
 }

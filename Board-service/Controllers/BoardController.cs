@@ -35,5 +35,45 @@ namespace Board_service.Controllers
             var Result = await _board.CreateBoard(_userId, Board);
             return Result;
         }
+
+        [HttpGet("get")]
+        [ProducesResponseType(typeof(BoardDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<BoardDTO> GetBoard(string BoardId)
+        {
+            var Result = await _board.GetBoard(BoardId, _userId);
+            return Result;
+        }
+
+        [HttpGet("getall")]
+        [ProducesResponseType(typeof(List<BoardDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<List<BoardDTO>> GetBoards()
+        {
+            var Result = await _board.GetBoards(_userId);
+            return Result;
+        }
+
+        [HttpGet("getsmall")]
+        [ProducesResponseType(typeof(SmallBoardDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId)
+        {
+            var Result = await _board.GetSmallBoard(BoardId, _userId);
+            return Result;
+        }
+
+        [HttpGet("getallsmall")]
+        [ProducesResponseType(typeof(List<SmallBoardDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<List<SmallBoardDTO>> GetSmallBoards()
+        {
+            var Result = await _board.GetSmallBoards(_userId);
+            return Result;
+        }
     }
 }

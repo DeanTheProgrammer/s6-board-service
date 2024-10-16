@@ -3,6 +3,8 @@ using Models.Enum;
 using Models.Models;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
+using DTO;
+using DTO.DTO_s.Board;
 using MongoDB.Driver;
 
 namespace InfraMongoDB.Infra
@@ -17,26 +19,27 @@ namespace InfraMongoDB.Infra
             IMongoDatabase database = client.GetDatabase(Settings.DatabaseName);
             _boardCollection = database.GetCollection<BoardModel>("Board");
         }
-        public void AddUserToBoard(string BoardId, UserModel User)
+
+        public void AddUserToBoard(string BoardId, UserDTO User)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<string> CreateBoard(string UserId, string Name, string? Description)
+        public async Task<string> CreateBoard(string UserId, CreateBoardDTO input)
         {
-            if (string.IsNullOrEmpty(Name))
+            if (string.IsNullOrEmpty(input.Name))
             {
                 throw new ValidationException("Name cannot be null");
             }
 
             BoardModel NewBoard = new BoardModel()
             {
-                Name = Name,
+                Name = input.Name,
             };
 
-            if (!string.IsNullOrEmpty(Description))
+            if (!string.IsNullOrEmpty(input.Description))
             {
-                NewBoard.Description = Description;
+                NewBoard.Description = input.Description;
             }
             else
             {
@@ -74,18 +77,18 @@ namespace InfraMongoDB.Infra
             throw new NotImplementedException();
         }
 
-        public List<BoardModel> GetActiveBoards(string UserId)
+        public List<BoardDTO> GetActiveBoards(string UserId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<BoardModel> GetBoard(string BoardId)
+        public async Task<BoardDTO> GetBoard(string BoardId, string UserId)
         {
-            BoardModel result = await _boardCollection.FindAsync(Builders<BoardModel>.Filter.Eq("Id", ObjectId.Parse(BoardId))).Result.FirstOrDefaultAsync();
-            return result;
+            BoardModel result = await _boardCollection.FindAsync(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).Result.FirstOrDefaultAsync();
+            return Transform.BoardTransform.ToDTO(result);
         }
 
-        public List<BoardModel> GetBoardArchived(string UserId)
+        public List<BoardDTO> GetBoardArchived(string UserId)
         {
             throw new NotImplementedException();
         }
@@ -95,12 +98,43 @@ namespace InfraMongoDB.Infra
             throw new NotImplementedException();
         }
 
+        public async Task<List<BoardDTO>> GetBoards(string UserId)
+        { 
+            List<BoardDTO> Result = new List<BoardDTO>();
+            List<BoardModel> models = await _boardCollection.FindAsync(b => b.Users.Any(u => u.Id == UserId)).Result.ToListAsync();
+            foreach (var model in models)
+            {
+                Result.Add(Transform.BoardTransform.ToDTO(model));
+            }
+            return Result;
+        }
+
+        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId, string UserId)
+        {
+            
+            BoardModel model = await _boardCollection.FindAsync(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).Result.FirstOrDefaultAsync();
+
+            return Transform.BoardTransform.ToSmallBoardDTO(model);
+        }
+
+        public async Task<List<SmallBoardDTO>> GetSmallBoards(string UserId)
+        {
+            List<SmallBoardDTO> Result = new List<SmallBoardDTO>();
+            List<BoardModel> models = await _boardCollection.FindAsync(b => b.Users.Any(u => u.Id == UserId)).Result.ToListAsync();
+            foreach (BoardModel model in models)
+            {
+                Result.Add(Transform.BoardTransform.ToSmallBoardDTO(model));
+            }
+
+            return Result;
+        }
+
         public void RemoveUserFromBoard(string BoardId, string UserId)
         {
             throw new NotImplementedException();
         }
 
-        public string UpdateBoard(string UserId, BoardModel Board)
+        public string UpdateBoard(string UserId, BoardDTO Board)
         {
             throw new NotImplementedException();
         }
