@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DTO
+namespace DTO.DTO_s.Board
 {
     public class BoardDTO
     {

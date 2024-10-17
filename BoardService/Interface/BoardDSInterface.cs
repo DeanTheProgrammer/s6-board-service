@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DTO;
 using DTO.DTO_s.Board;
-using Models.Enum;
-using Models.Models;
+using DTO.Enum;
+
 
 namespace BoardService.Interface
 {

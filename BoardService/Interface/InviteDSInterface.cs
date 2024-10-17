@@ -1,14 +1,17 @@
 ﻿using System;
-using Models.Models;
+using DTO;
+using DTO.DTO_s.InviteLink;
 
 namespace BoardService.Interface;
 
 public interface InviteDSInterface
 {
-    public string CreateInviteLink(InviteLinkModel Invite);
-    public InviteLinkModel GetInviteLinkByCode(string Code);
-    public InviteLinkModel GetInviteLinkById(string InviteLinkId);
-    public List<InviteLinkModel> GetInviteLinkByBoardId(string BoardId);
-    public string UpdateInviteLink(InviteLinkModel Invite);
-    public void DeleteInviteLink(string InviteLinkId);
+    public Task<string> CreateInviteLink(InviteLinkDTO Invite);
+    public Task<InviteLinkDTO> GetInviteLinkByCode(string Code);
+    public Task<InviteLinkDTO> GetInviteLinkById(string Id);
+    public Task<List<InviteLinkDTO>> GetInviteLinkByBoardId(string BoardId);
+    public Task<List<OpenInviteLinkDTO>> GetPublicInviteLinkByBoardId(string BoardId);
+    public Task<OpenInviteLinkDTO> GetPublicInviteLinkById(string id);
+    public Task<string> UpdateInviteLink(InviteLinkDTO Invite);
+    public Task DeleteInviteLink(string InviteLinkId);
 }

@@ -1,4 +1,5 @@
-﻿using BoardService.Interface;
+﻿using BoardService.Handler;
+using BoardService.Interface;
 using InfraMongoDB;
 using InfraMongoDB.Infra;
 using Microsoft.Extensions.Configuration;
@@ -22,9 +23,21 @@ namespace Board_service
             services.AddEndpointsApiExplorer();
             services.AddProblemDetails();
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
+
+            //Database infrastructure layer
             MongoDBSettings MongoDBSettings = new MongoDBSettings();
             Configuration.GetSection("MongoDB").Bind(MongoDBSettings);
             services.AddSingleton<BoardDSInterface>(new BoardInfrastructure(MongoDBSettings));
+            services.AddSingleton<InviteDSInterface>(new InviteLinkInfrastructure(MongoDBSettings));
+            
+
+
+            //Service layer
+            services.AddSingleton<BoardHandler>();
+            services.AddSingleton<InviteLinkHandler>();
+
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Board_service", Version = "v1" });

@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BoardService\BoardService.csproj" />
+    <ProjectReference Include="..\CustomExceptions\CustomExceptions.csproj" />
     <ProjectReference Include="..\DTO\DTO.csproj" />
     <ProjectReference Include="..\InfraMongoDB\InfraMongoDB.csproj" />
   </ItemGroup>

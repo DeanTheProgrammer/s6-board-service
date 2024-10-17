@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CustomExceptions.ObjectExceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Serilog;
 
@@ -33,6 +34,16 @@ namespace Board_service.Handler.ExceptionHandler
                     UserException(validationException);
                     break;
 
+                case NotFoundException notFoundException:
+                    httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+                    ResponseMessage = notFoundException.Message;
+                    UserException(notFoundException);
+                    break;
+                case UnauthorizedAccessException unauthorized:
+                    httpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    ResponseMessage = unauthorized.Message;
+                    UserException(unauthorized);
+                    break;
                 default:
                     httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
                     ResponseMessage = "Internal Server error";
@@ -47,7 +58,7 @@ namespace Board_service.Handler.ExceptionHandler
                 ErrorHanled = true;
             }
 
-
+            
 
             return ErrorHanled;
         }

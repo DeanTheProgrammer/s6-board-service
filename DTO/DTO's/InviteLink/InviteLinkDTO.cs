@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DTO.Enum;
 
-namespace DTO
+namespace DTO.DTO_s.InviteLink
 {
     public class InviteLinkDTO
     {

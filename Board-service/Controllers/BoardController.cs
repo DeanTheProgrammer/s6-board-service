@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using BoardService.Handler;
 using DTO;
 using DTO.DTO_s.Board;
+using DTO.DTO_s.InviteLink;
 
 namespace Board_service.Controllers
 {
@@ -16,11 +17,14 @@ namespace Board_service.Controllers
         private readonly BoardHandler _board;
         private readonly string _userId = "TestUserId";
         private readonly ILogger<BoardController> _logger;
-        public BoardController(BoardDSInterface boardDsInterface, ILogger<BoardController> logger)
+        private readonly InviteLinkHandler _inviteLinkHandler;
+
+        public BoardController(BoardHandler board, ILogger<BoardController> logger)
         {
-            _board = new BoardHandler(boardDsInterface, null);
+            _board = board;
             _logger = logger;
         }
+
         [HttpPost("create")]
         [ProducesResponseType(typeof(BoardDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -31,7 +35,7 @@ namespace Board_service.Controllers
             {
                 throw new ValidationException("Name cannot be null");
             }
-            
+
             var Result = await _board.CreateBoard(_userId, Board);
             return Result;
         }
@@ -74,6 +78,16 @@ namespace Board_service.Controllers
         {
             var Result = await _board.GetSmallBoards(_userId);
             return Result;
+        }
+
+
+        [HttpPost("CreateInvite")]
+        [ProducesResponseType(typeof(InviteLinkDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<InviteLinkDTO> CreateInviteLink(CreateInviteLinkDTO inviteLink)
+        {
+            return await _board.CreateInviteLink(_userId, inviteLink);
         }
     }
 }

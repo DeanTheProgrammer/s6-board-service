@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraMongoDB", "InfraMongoDB\InfraMongoDB.csproj", "{800B3BA2-7AB2-4AAA-B48D-90FA7D2F1CDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomExceptions", "CustomExceptions\CustomExceptions.csproj", "{D5BC27F3-6896-44A7-B723-97B28A975900}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{800B3BA2-7AB2-4AAA-B48D-90FA7D2F1CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{800B3BA2-7AB2-4AAA-B48D-90FA7D2F1CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{800B3BA2-7AB2-4AAA-B48D-90FA7D2F1CDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5BC27F3-6896-44A7-B723-97B28A975900}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5BC27F3-6896-44A7-B723-97B28A975900}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5BC27F3-6896-44A7-B723-97B28A975900}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5BC27F3-6896-44A7-B723-97B28A975900}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

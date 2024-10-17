@@ -84,7 +84,7 @@ namespace InfraMongoDB.Infra
 
         public async Task<BoardDTO> GetBoard(string BoardId, string UserId)
         {
-            BoardModel result = await _boardCollection.FindAsync(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).Result.FirstOrDefaultAsync();
+            BoardModel result = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).FirstOrDefaultAsync();
             return Transform.BoardTransform.ToDTO(result);
         }
 
@@ -101,7 +101,7 @@ namespace InfraMongoDB.Infra
         public async Task<List<BoardDTO>> GetBoards(string UserId)
         { 
             List<BoardDTO> Result = new List<BoardDTO>();
-            List<BoardModel> models = await _boardCollection.FindAsync(b => b.Users.Any(u => u.Id == UserId)).Result.ToListAsync();
+            List<BoardModel> models = await _boardCollection.Find(b => b.Users.Any(u => u.Id == UserId)).ToListAsync();
             foreach (var model in models)
             {
                 Result.Add(Transform.BoardTransform.ToDTO(model));
@@ -112,7 +112,7 @@ namespace InfraMongoDB.Infra
         public async Task<SmallBoardDTO> GetSmallBoard(string BoardId, string UserId)
         {
             
-            BoardModel model = await _boardCollection.FindAsync(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).Result.FirstOrDefaultAsync();
+            BoardModel model = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).FirstOrDefaultAsync();
 
             return Transform.BoardTransform.ToSmallBoardDTO(model);
         }
@@ -120,7 +120,7 @@ namespace InfraMongoDB.Infra
         public async Task<List<SmallBoardDTO>> GetSmallBoards(string UserId)
         {
             List<SmallBoardDTO> Result = new List<SmallBoardDTO>();
-            List<BoardModel> models = await _boardCollection.FindAsync(b => b.Users.Any(u => u.Id == UserId)).Result.ToListAsync();
+            List<BoardModel> models = await _boardCollection.Find(b => b.Users.Any(u => u.Id == UserId)).ToListAsync();
             foreach (BoardModel model in models)
             {
                 Result.Add(Transform.BoardTransform.ToSmallBoardDTO(model));
@@ -139,7 +139,7 @@ namespace InfraMongoDB.Infra
             throw new NotImplementedException();
         }
 
-        public void UpdateUserRole(string BoardId, string UserId, BoardRoleEnum Role)
+        public void UpdateUserRole(string BoardId, string UserId, DTO.Enum.BoardRoleEnum Role)
         {
             throw new NotImplementedException();
         }
