@@ -20,7 +20,7 @@ jobs:
         dotnet-version: 8.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
+    - name: Pull_Request_Build
       run: dotnet build --no-restore
-    - name: Test
+    - name: Pull_Request_Test
       run: dotnet test --no-build --verbosity normal
