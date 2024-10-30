@@ -23,7 +23,7 @@ namespace BoardService.Interface
         public DateTime GetBoardDeletedDate(string BoardId);
         public Task<BoardDTO> GetBoard(string BoardId, string UserId);
         public Task<List<BoardDTO>> GetBoards(string UserId);
-        public Task<SmallBoardDTO> GetSmallBoard(string BoardId, string UserId);
+        public Task<SmallBoardDTO> GetSmallBoard(string BoardId);
         public Task<List<SmallBoardDTO>> GetSmallBoards(string UserId);
     }
 }

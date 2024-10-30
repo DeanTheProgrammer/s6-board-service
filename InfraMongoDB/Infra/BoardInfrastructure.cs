@@ -3,9 +3,12 @@ using Models.Enum;
 using Models.Models;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
+using Amazon.Runtime.Internal;
 using DTO;
 using DTO.DTO_s.Board;
 using MongoDB.Driver;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace InfraMongoDB.Infra
 {
@@ -13,8 +16,10 @@ namespace InfraMongoDB.Infra
     {
         private readonly IMongoCollection<BoardModel> _boardCollection;
 
-        public BoardInfrastructure(MongoDBSettings Settings)
+        public BoardInfrastructure(IOptions<MongoDBSettings> options)
         {
+
+            MongoDBSettings Settings = options.Value;
             MongoClient client = new MongoClient(Settings.ConnectionString);
             IMongoDatabase database = client.GetDatabase(Settings.DatabaseName);
             _boardCollection = database.GetCollection<BoardModel>("Board");
@@ -109,10 +114,10 @@ namespace InfraMongoDB.Infra
             return Result;
         }
 
-        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId, string UserId)
+        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId)
         {
             
-            BoardModel model = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId) && b.Users.Any(u => u.Id == UserId)).FirstOrDefaultAsync();
+            BoardModel model = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId)).FirstOrDefaultAsync();
 
             return Transform.BoardTransform.ToSmallBoardDTO(model);
         }

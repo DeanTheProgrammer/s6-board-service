@@ -8,6 +8,7 @@ namespace InfraMongoDB
 {
     public class MongoDBSettings
     {
+        public const string Settings = "MongoDB";
         public string ConnectionString { get; set; }
         public string DatabaseName { get; set; }
     }

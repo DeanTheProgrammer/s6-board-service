@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Net;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Board_service
 {
@@ -24,17 +25,17 @@ namespace Board_service
             services.AddProblemDetails();
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
 
-            //Database infrastructure layer
-            MongoDBSettings MongoDBSettings = new MongoDBSettings();
-            Configuration.GetSection("MongoDB").Bind(MongoDBSettings);
-            services.AddSingleton<BoardDSInterface>(new BoardInfrastructure(MongoDBSettings));
-            services.AddSingleton<InviteDSInterface>(new InviteLinkInfrastructure(MongoDBSettings));
+            services.Configure<MongoDBSettings>(Configuration.GetSection(MongoDBSettings.Settings));
+
+
+            services.AddScoped<BoardDSInterface, BoardInfrastructure>();
+            services.AddScoped<InviteDSInterface, InviteLinkInfrastructure>();
             
 
 
             //Service layer
-            services.AddSingleton<BoardHandler>();
-            services.AddSingleton<InviteLinkHandler>();
+            services.AddScoped<BoardHandler>();
+            services.AddScoped<InviteLinkHandler>();
 
 
 

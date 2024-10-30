@@ -12,13 +12,11 @@ namespace BoardService.Handler
     public class BoardHandler
     {
         private readonly BoardDSInterface _boardDsInterface;
-        private readonly InviteDSInterface _InviteDsInterface;
         private readonly ILogger<BoardHandler> _logger;
 
-        public BoardHandler(BoardDSInterface boardDsInterface, InviteDSInterface? InviteDsInterface, ILogger<BoardHandler>? logger)
+        public BoardHandler(BoardDSInterface boardDsInterface, ILogger<BoardHandler>? logger)
         {
-            _boardDsInterface = boardDsInterface;
-            _InviteDsInterface = InviteDsInterface; 
+            this._boardDsInterface = boardDsInterface;
             _logger = logger;
         }
 
@@ -45,55 +43,14 @@ namespace BoardService.Handler
             return await _boardDsInterface.GetBoards(UserId);
         }
 
-        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId, string UserId)
+        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId)
         {
-            return await _boardDsInterface.GetSmallBoard(BoardId, UserId);
+            return await _boardDsInterface.GetSmallBoard(BoardId);
         }
 
         public async Task<List<SmallBoardDTO>> GetSmallBoards(string UserId)
         {
             return await _boardDsInterface.GetSmallBoards(UserId);
-        }
-
-        public async Task<InviteLinkDTO> CreateInviteLink(string UserId, CreateInviteLinkDTO inviteLink)
-        {
-
-            if(string.IsNullOrEmpty(inviteLink.BoardId))
-            {
-                throw new ValidationException("BoardId cannot be null");
-            }
-
-            BoardDTO Board = await _boardDsInterface.GetBoard(inviteLink.BoardId, UserId);
-            if(Board == null)
-            {
-                throw new NotFoundException("Board not found");
-            }
-
-            var temp = Board.Users.Find(u => u.Id == UserId && u.Role == BoardRoleEnum.Admin);
-            if (temp == null)
-            {
-                throw new UnauthorizedAccessException("You're not authorized to this");
-            }
-
-            if (inviteLink.ExpirationDate == null || inviteLink.ExpirationDate == DateTime.MinValue)
-            {
-                inviteLink.ExpirationDate = DateTime.Now.AddDays(7);
-            }
-
-            string LinkCode = Guid.NewGuid() +"-"+ Guid.NewGuid();
-            InviteLinkDTO NewInvite = new InviteLinkDTO()
-            {
-                BoardId = inviteLink.BoardId,
-                ExpiresAt = inviteLink.ExpirationDate.GetValueOrDefault(),
-                LinkCode = LinkCode,
-                ReceivingRole = inviteLink.BoardRole,
-                CreatedBy = UserId,
-                CreatedAt = DateTime.Now
-            };
-
-            string id = await _InviteDsInterface.CreateInviteLink(NewInvite);
-            InviteLinkDTO result = await _InviteDsInterface.GetInviteLinkById(id);
-            return result;
         }
 
     }

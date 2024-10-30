@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BoardService.Interface;
 using DTO.DTO_s.InviteLink;
 using InfraMongoDB.Transform;
+using Microsoft.Extensions.Options;
 using Models.Enum;
 using Models.Models;
 using MongoDB.Bson;
@@ -16,8 +17,14 @@ namespace InfraMongoDB.Infra
     public class InviteLinkInfrastructure : InviteDSInterface
     {
         private readonly IMongoCollection<InviteLinkModel> _InviteLinkCollection;
-        public InviteLinkInfrastructure(MongoDBSettings Settings)
+        public InviteLinkInfrastructure(IOptions<MongoDBSettings> options)
         {
+            MongoDBSettings Settings = options.Value;
+
+            if (Settings == null)
+            {
+                throw new Exception("The settings are null");
+            }
             MongoClient client = new MongoClient(Settings.ConnectionString);
             IMongoDatabase database = client.GetDatabase(Settings.DatabaseName);
             _InviteLinkCollection = database.GetCollection<InviteLinkModel>("InviteLink");

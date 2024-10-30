@@ -66,7 +66,7 @@ namespace Board_service.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<SmallBoardDTO> GetSmallBoard(string BoardId)
         {
-            var Result = await _board.GetSmallBoard(BoardId, _userId);
+            var Result = await _board.GetSmallBoard(BoardId);
             return Result;
         }
 
@@ -78,16 +78,6 @@ namespace Board_service.Controllers
         {
             var Result = await _board.GetSmallBoards(_userId);
             return Result;
-        }
-
-
-        [HttpPost("CreateInvite")]
-        [ProducesResponseType(typeof(InviteLinkDTO), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<InviteLinkDTO> CreateInviteLink(CreateInviteLinkDTO inviteLink)
-        {
-            return await _board.CreateInviteLink(_userId, inviteLink);
         }
     }
 }
