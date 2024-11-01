@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Models.Models
 {
-    public class BoardModel
+    public class ProjectModel
     {
         [BsonId]
         public ObjectId Id { get; set; }

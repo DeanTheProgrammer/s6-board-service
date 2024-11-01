@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DTO.Enum;
 
-namespace DTO.DTO_s.Board
+namespace DTO.DTO_s.Project
 {
-    public class UpdateBoardDTO
+    public class CreateProjectDTO
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public SprintTimeEnum SprintTime { get; set; }
     }
 }

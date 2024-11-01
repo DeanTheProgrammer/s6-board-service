@@ -12,6 +12,6 @@ namespace DTO
         public string Id { get; set; }
         public string Nickname { get; set; }
         public string TeamRole { get; set; }
-        public BoardRoleEnum Role { get; set; }
+        public ProjectRoleEnum Role { get; set; }
     }
 }

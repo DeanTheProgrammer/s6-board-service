@@ -18,6 +18,6 @@ namespace Models.Models
         [BsonElement("TeamRole")]
         public string TeamRole { get; set; }
         [BsonElement("Role")]
-        public BoardRoleEnum Role { get; set; }
+        public ProjectRoleEnum Role { get; set; }
     }
 }

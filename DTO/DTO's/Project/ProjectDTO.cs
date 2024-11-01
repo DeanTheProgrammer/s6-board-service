@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DTO.Enum;
 
-namespace DTO.DTO_s.Board
+namespace DTO.DTO_s.Project
 {
-    public class BoardDTO
+    public class ProjectDTO
     {
         public string Id { get; set; }
         public string Name { get; set; }

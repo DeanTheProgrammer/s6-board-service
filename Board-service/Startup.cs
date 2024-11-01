@@ -1,6 +1,4 @@
-﻿using BoardService.Handler;
-using BoardService.Interface;
-using InfraMongoDB;
+﻿using InfraMongoDB;
 using InfraMongoDB.Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
@@ -8,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Net;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectService.Handler;
+using ProjectService.Interface;
 
 namespace Board_service
 {
@@ -28,20 +28,20 @@ namespace Board_service
             services.Configure<MongoDBSettings>(Configuration.GetSection(MongoDBSettings.Settings));
 
 
-            services.AddScoped<BoardDSInterface, BoardInfrastructure>();
+            services.AddScoped<ProjectDSInterface, ProjectInfrastructure>();
             services.AddScoped<InviteDSInterface, InviteLinkInfrastructure>();
             
 
 
             //Service layer
-            services.AddScoped<BoardHandler>();
+            services.AddScoped<ProjectHandler>();
             services.AddScoped<InviteLinkHandler>();
 
 
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Board_service", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Project service", Version = "v1" });
             });
         }
         

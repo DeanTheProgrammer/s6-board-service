@@ -9,8 +9,8 @@ namespace DTO.DTO_s.InviteLink
 {
     public class CreateInviteLinkDTO
     {
-        public string BoardId { get; set; }
-        public BoardRoleEnum BoardRole { get; set; }
+        public string ProjectId { get; set; }
+        public ProjectRoleEnum ProjectRole { get; set; }
         public DateTime? ExpirationDate { get; set; }
     }
 }

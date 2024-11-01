@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Models.Enum
+namespace DTO.Enum
 {
-    public enum BoardRoleEnum
+    public enum ProjectRoleEnum
     {
         Admin = 2,
         Member = 1,

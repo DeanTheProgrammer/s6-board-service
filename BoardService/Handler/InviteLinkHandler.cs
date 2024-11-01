@@ -5,26 +5,26 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using BoardService.Interface;
+using ProjectService.Interface;
 using CustomExceptions.ObjectExceptions;
-using DTO.DTO_s.Board;
+using DTO.DTO_s.Project;
 using DTO.DTO_s.InviteLink;
 using DTO.Enum;
 using Microsoft.Extensions.Logging;
 
-namespace BoardService.Handler
+namespace ProjectService.Handler
 {
     public class InviteLinkHandler
     {
         private readonly InviteDSInterface _inviteLinkDSInterface;
         private readonly ILogger<InviteLinkHandler> _logger;
-        private readonly BoardHandler _boardHandler;
+        private readonly ProjectHandler _ProjectHandler;
 
-        public InviteLinkHandler(InviteDSInterface InviteLink, ILogger<InviteLinkHandler>? logger, BoardHandler boardHandler)
+        public InviteLinkHandler(InviteDSInterface InviteLink, ILogger<InviteLinkHandler>? logger, ProjectHandler ProjectHandler)
         {
             this._inviteLinkDSInterface = InviteLink;
             _logger = logger;
-            this._boardHandler = boardHandler;
+            this._ProjectHandler = ProjectHandler;
         }
 
         public async Task<PublicInviteLinkDTO> GetLinkByCode(string Code)
@@ -44,28 +44,28 @@ namespace BoardService.Handler
             };
 
 
-            SmallBoardDTO BoardDTO = await _boardHandler.GetSmallBoard(inviteObject.BoardId);
+            SmallProjectDTO ProjectDTO = await _ProjectHandler.GetSmallProject(inviteObject.ProjectId);
 
-            publicInvite.BoardName = BoardDTO.Name;
-            publicInvite.BoardDescription = BoardDTO.Description;
+            publicInvite.ProjectName = ProjectDTO.Name;
+            publicInvite.ProjectDescription = ProjectDTO.Description;
 
             return publicInvite;
         }
 
         public async Task<InviteLinkDTO> CreateInviteLink(string UserId, CreateInviteLinkDTO inviteLink)
         {
-            if (string.IsNullOrEmpty(inviteLink.BoardId))
+            if (string.IsNullOrEmpty(inviteLink.ProjectId))
             {
-                throw new ValidationException("BoardId cannot be null");
+                throw new ValidationException("ProjectId cannot be null");
             }
 
-            BoardDTO board = await _boardHandler.GetBoard(inviteLink.BoardId, UserId);
-            if (board == null)
+            ProjectDTO Project = await _ProjectHandler.GetProject(inviteLink.ProjectId, UserId);
+            if (Project == null)
             {
-                throw new NotFoundException("Board not found");
+                throw new NotFoundException("Project not found");
             }
 
-            var temp = board.Users.Find(u => u.Id == UserId && u.Role == BoardRoleEnum.Admin);
+            var temp = Project.Users.Find(u => u.Id == UserId && u.Role == ProjectRoleEnum.Admin);
             if (temp == null)
             {
                 throw new UnauthorizedAccessException("You're not authorized to this");
@@ -80,10 +80,10 @@ namespace BoardService.Handler
             string LinkCode = Guid.NewGuid() + "-" + Guid.NewGuid();
             InviteLinkDTO NewInvite = new InviteLinkDTO()
             {
-                BoardId = inviteLink.BoardId,
+                ProjectId = inviteLink.ProjectId,
                 ExpiresAt = inviteLink.ExpirationDate.GetValueOrDefault(),
                 LinkCode = LinkCode,
-                ReceivingRole = inviteLink.BoardRole,
+                ReceivingRole = inviteLink.ProjectRole,
                 CreatedBy = UserId,
                 CreatedAt = DateTime.Now
             };
