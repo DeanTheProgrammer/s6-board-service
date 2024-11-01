@@ -3,9 +3,10 @@ using Models.Enum;
 using Models.Models;
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
-using Amazon.Runtime.Internal;
+using CustomExceptions.ObjectExceptions;
 using DTO;
 using DTO.DTO_s.Board;
+using InfraMongoDB.Transform;
 using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ namespace InfraMongoDB.Infra
             _boardCollection = database.GetCollection<BoardModel>("Board");
         }
 
-        public void AddUserToBoard(string BoardId, UserDTO User)
+        public Task AddUserToBoard(string BoardId, UserDTO User)
         {
             throw new NotImplementedException();
         }
@@ -53,38 +54,41 @@ namespace InfraMongoDB.Infra
 
             NewBoard.CreatedBy = UserId;
             NewBoard.CreatedAt = DateTime.Now;
-            NewBoard.Updates = new List<UpdateModel>();
+            NewBoard.SprintTime = SprintTimeEnum.None;
             NewBoard.Users = new List<UserModel>();
             NewBoard.Users.Add(new UserModel() { Id = UserId, Role = BoardRoleEnum.Admin });
 
-            NewBoard.Status = new List<StatusModel>();
-
-            ObjectId toDoObjectId = ObjectId.GenerateNewId();
-            ObjectId inProgressObjectId = ObjectId.GenerateNewId();
-            ObjectId doneObjectId = ObjectId.GenerateNewId();
-
-
-            NewBoard.Status.Add(new StatusModel() { Id = toDoObjectId, Name = "To Do", Description = "Task is not started", Status = StatusEnum.ToDo });
-            NewBoard.Status.Add(new StatusModel() { Id = inProgressObjectId, Name = "In Progress", Description = "Task is in progress", Status = StatusEnum.InProgress });
-            NewBoard.Status.Add(new StatusModel() { Id = doneObjectId, Name = "Done", Description = "Task is completed", Status = StatusEnum.Done });
-
-            NewBoard.Columns = new List<ColumnsModel>();
-            NewBoard.Columns.Add(new ColumnsModel() { Name = "To Do", OrderNumber = 0, StatusId = toDoObjectId.ToString() });
-            NewBoard.Columns.Add(new ColumnsModel() { Name = "In Progress", OrderNumber = 1, StatusId = inProgressObjectId.ToString() });
-            NewBoard.Columns.Add(new ColumnsModel() { Name = "Done", OrderNumber = 2, StatusId = doneObjectId.ToString() });
+            NewBoard.IsDeleted = false;
 
             await _boardCollection.InsertOneAsync(NewBoard);
             return NewBoard.Id.ToString();
         }
 
-        public void DeleteBoard(string UserId, string BoardId)
+        public async Task DeleteBoard(string UserId, string BoardId)
         {
-            throw new NotImplementedException();
+            BoardModel board = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId)).FirstOrDefaultAsync();
+            if (board == null)
+            {
+                throw new NotFoundException("Board is not found");
+            }
+
+            board.IsDeleted = true;
+            board.DeletedAt = DateTime.Now;
+            board.DeletedBy = UserId;
+
+            await _boardCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(BoardId), board);
         }
 
-        public List<BoardDTO> GetActiveBoards(string UserId)
+        public async Task<List<BoardDTO>> GetActiveBoards(string UserId)
         {
-            throw new NotImplementedException();
+            List<BoardModel> boards = await _boardCollection.Find(b => b.Users.Any(u => u.Id == UserId) && b.IsDeleted == false).ToListAsync();
+
+            List<BoardDTO> result = new List<BoardDTO>();
+            foreach (var board in boards)
+            {
+                result.Add(BoardTransform.ToDTO(board));
+            }
+            return result;
         }
 
         public async Task<BoardDTO> GetBoard(string BoardId, string UserId)
@@ -93,14 +97,29 @@ namespace InfraMongoDB.Infra
             return Transform.BoardTransform.ToDTO(result);
         }
 
-        public List<BoardDTO> GetBoardArchived(string UserId)
+        public async Task<List<BoardDTO>> GetBoardArchived(string UserId)
         {
-            throw new NotImplementedException();
+            List<BoardModel> boards = await _boardCollection.Find(b =>
+                b.Users.Any(u => u.Id == UserId) && b.DeletedAt.Value.AddDays(30) > DateTime.Now).ToListAsync();
+
+            List<BoardDTO> result = new List<BoardDTO>();
+            foreach (BoardModel board in boards)
+            {
+                result.Add(Transform.BoardTransform.ToDTO(board));
+            }
+            return result;
         }
 
-        public DateTime GetBoardDeletedDate(string BoardId)
+        public async Task<DateTime> GetBoardDeletedDate(string BoardId)
         {
-            throw new NotImplementedException();
+            BoardModel board = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId) && b.IsDeleted == true)
+                .FirstOrDefaultAsync();
+
+            if (board.DeletedAt.Value == null)
+            {
+                throw new Exception("This should not be possible");
+            }
+            return board.DeletedAt.Value;
         }
 
         public async Task<List<BoardDTO>> GetBoards(string UserId)
@@ -134,19 +153,60 @@ namespace InfraMongoDB.Infra
             return Result;
         }
 
-        public void RemoveUserFromBoard(string BoardId, string UserId)
+        public async Task RemoveUserFromBoard(string BoardId, string UserId)
         {
-            throw new NotImplementedException();
+            BoardModel Board = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId)).FirstOrDefaultAsync();
+            UserModel user = Board.Users.Find(u => u.Id == UserId);
+
+            if (user == null)
+            {
+                throw new NotFoundException("User doesn't exist in board");
+            }
+
+            Board.Users.Remove(user);
+
+            await _boardCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(BoardId), Board);
+
         }
 
-        public string UpdateBoard(string UserId, BoardDTO Board)
+        public async Task UnDeleteBoard(string BoardId)
         {
-            throw new NotImplementedException();
+            BoardModel Board = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId)).FirstOrDefaultAsync();
+
+            Board.DeletedAt = DateTime.MinValue;
+            Board.DeletedBy = null;
+            Board.IsDeleted = false;
+
+            await _boardCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(BoardId), Board);
         }
 
-        public void UpdateUserRole(string BoardId, string UserId, DTO.Enum.BoardRoleEnum Role)
+        public async Task UpdateBoard(string BoardId, UpdateBoardDTO Board)
         {
-            throw new NotImplementedException();
+            BoardModel OldBoard = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId)).FirstOrDefaultAsync();
+            BoardModel NewBoard = Transform.BoardTransform.ToModelUpdate(OldBoard, Board);
+
+            await _boardCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(BoardId), NewBoard);
+
+        }
+
+        public async Task UpdateUserRole(string BoardId, string UserId, DTO.Enum.BoardRoleEnum Role)
+        {
+            BoardModel board = await _boardCollection.Find(b => b.Id == ObjectId.Parse(BoardId)).FirstOrDefaultAsync();
+            if (board == null)
+            {
+                throw new NotFoundException("Board not found");
+            }
+
+            foreach (UserModel user in board.Users)
+            {
+                if (user.Id == UserId)
+                {
+                    user.Role = (BoardRoleEnum)Role;
+                }
+            }
+
+            await _boardCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(BoardId), board);
+
         }
     }
 }

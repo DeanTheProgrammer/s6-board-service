@@ -12,15 +12,16 @@ namespace BoardService.Interface
 {
     public interface BoardDSInterface
     {
-        public void AddUserToBoard(string BoardId, UserDTO User);
-        public void RemoveUserFromBoard(string BoardId, string UserId);
-        public void UpdateUserRole(string BoardId, string UserId, BoardRoleEnum Role);
+        public Task AddUserToBoard(string BoardId, UserDTO User);
+        public Task RemoveUserFromBoard(string BoardId, string UserId);
+        public Task UpdateUserRole(string BoardId, string UserId, BoardRoleEnum Role);
         public Task<string> CreateBoard(string UserId, CreateBoardDTO Board);
-        public string UpdateBoard(string UserId, BoardDTO Board);
-        public void DeleteBoard(string UserId, string BoardId);
-        public List<BoardDTO> GetActiveBoards(string UserId);
-        public List<BoardDTO> GetBoardArchived(string UserId);
-        public DateTime GetBoardDeletedDate(string BoardId);
+        public Task UpdateBoard(string BoardId, UpdateBoardDTO Board);
+        public Task DeleteBoard(string UserId, string BoardId);
+        public Task UnDeleteBoard(string BoardId);
+        public Task<List<BoardDTO>> GetActiveBoards(string UserId);
+        public Task<List<BoardDTO>> GetBoardArchived(string UserId);
+        public Task<DateTime> GetBoardDeletedDate(string BoardId);
         public Task<BoardDTO> GetBoard(string BoardId, string UserId);
         public Task<List<BoardDTO>> GetBoards(string UserId);
         public Task<SmallBoardDTO> GetSmallBoard(string BoardId);
