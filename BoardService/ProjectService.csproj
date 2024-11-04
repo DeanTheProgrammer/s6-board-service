@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomExceptions\CustomExceptions.csproj" />
     <ProjectReference Include="..\DTO\DTO.csproj" />
+    <ProjectReference Include="..\InfraRabbitMQ\InfraRabbitMQ.csproj" />
   </ItemGroup>
 
 </Project>

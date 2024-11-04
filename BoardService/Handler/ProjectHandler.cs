@@ -6,6 +6,7 @@ using DTO.DTO_s.Project;
 using DTO.DTO_s.InviteLink;
 using DTO.Enum;
 using Microsoft.Extensions.Logging;
+using InfraRabbitMQ.Handler.DataSync;
 
 namespace ProjectService.Handler
 {
@@ -13,11 +14,13 @@ namespace ProjectService.Handler
     {
         private readonly ProjectDSInterface _ProjectDsInterface;
         private readonly ILogger<ProjectHandler> _logger;
+        private readonly ProjectSyncHandler _syncHandler;
 
-        public ProjectHandler(ProjectDSInterface ProjectDsInterface, ILogger<ProjectHandler>? logger)
+        public ProjectHandler(ProjectDSInterface ProjectDsInterface, ILogger<ProjectHandler>? logger, ProjectSyncHandler syncHandler)
         {
             this._ProjectDsInterface = ProjectDsInterface;
             _logger = logger;
+            _syncHandler = syncHandler;
         }
 
         public async Task<ProjectDTO> CreateProject(string UserId, CreateProjectDTO Project)
@@ -35,7 +38,9 @@ namespace ProjectService.Handler
 
         public async Task<ProjectDTO> GetProject(string ProjectId, string UserId)
         {
-            return await _ProjectDsInterface.GetProject(ProjectId, UserId);
+            ProjectDTO project = await _ProjectDsInterface.GetProject(ProjectId, UserId);
+            _syncHandler.PublishSyncObject(project);
+            return project;
         }
 
         public async Task<List<ProjectDTO>> GetProjects(string UserId)

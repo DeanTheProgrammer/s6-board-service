@@ -8,6 +8,8 @@ using Microsoft.Net;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectService.Handler;
 using ProjectService.Interface;
+using InfraRabbitMQ;
+using InfraRabbitMQ.Handler.DataSync;
 
 namespace Board_service
 {
@@ -26,6 +28,7 @@ namespace Board_service
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
 
             services.Configure<MongoDBSettings>(Configuration.GetSection(MongoDBSettings.Settings));
+            services.Configure<RabbitMQSettings>(Configuration.GetSection(RabbitMQSettings.Settings));
 
 
             services.AddScoped<ProjectDSInterface, ProjectInfrastructure>();
@@ -36,6 +39,7 @@ namespace Board_service
             //Service layer
             services.AddScoped<ProjectHandler>();
             services.AddScoped<InviteLinkHandler>();
+            services.AddSingleton<ProjectSyncHandler>();
 
 
 
