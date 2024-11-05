@@ -44,8 +44,8 @@ namespace InfraRabbitMQ.Handler.DataSync
             _Channel = connection.CreateModel();
 
             _Channel.ExchangeDeclare(ExchangeName, ExchangeType.Fanout, true);
-            _Channel.QueueDeclare(QueueName, durable: false, exclusive: false, autoDelete: true);
-            _Channel.QueueBind(QueueName, ExchangeName, "");
+            _Channel.QueueDeclare(QueueName, durable: false, exclusive: false, autoDelete: true, null);
+            _Channel.QueueBind(QueueName, ExchangeName, "", null);
 
             _Channel.BasicQos(0, 1, false);
 
