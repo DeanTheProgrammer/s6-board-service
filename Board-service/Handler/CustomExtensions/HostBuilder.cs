@@ -1,6 +1,8 @@
 ﻿using Board_service.Handler.CustomExtensions;
 using Serilog;
 using Serilog.Events;
+using Sentry;
+using Sentry.Serilog;
 
 namespace Board_service.Handler.StartupHandler
 {
@@ -17,8 +19,12 @@ namespace Board_service.Handler.StartupHandler
                     config.AddUserSecrets<Program>();
                     config.AddCommandLine(args);
                 })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
-                .AddAppLogging();
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                })
+                .AddAppLogging()
+                .UseSentry();
         }
     }
 }

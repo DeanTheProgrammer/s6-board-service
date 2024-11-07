@@ -14,9 +14,9 @@ namespace ProjectService.Handler
     {
         private readonly ProjectDSInterface _ProjectDsInterface;
         private readonly ILogger<ProjectHandler> _logger;
-        private readonly ProjectSyncHandler _syncHandler;
+        private readonly ProjectSyncPublisher _syncHandler;
 
-        public ProjectHandler(ProjectDSInterface ProjectDsInterface, ILogger<ProjectHandler>? logger, ProjectSyncHandler syncHandler)
+        public ProjectHandler(ProjectDSInterface ProjectDsInterface, ILogger<ProjectHandler>? logger, ProjectSyncPublisher syncHandler)
         {
             this._ProjectDsInterface = ProjectDsInterface;
             _logger = logger;

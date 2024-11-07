@@ -10,6 +10,8 @@ using ProjectService.Handler;
 using ProjectService.Interface;
 using InfraRabbitMQ;
 using InfraRabbitMQ.Handler.DataSync;
+using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 namespace Board_service
 {
@@ -24,11 +26,28 @@ namespace Board_service
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
+
+            services.AddHttpContextAccessor();
             services.AddProblemDetails();
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
 
+            //All settings
             services.Configure<MongoDBSettings>(Configuration.GetSection(MongoDBSettings.Settings));
             services.Configure<RabbitMQSettings>(Configuration.GetSection(RabbitMQSettings.Settings));
+
+            services.AddSingleton<IConnectionFactory>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value;
+                return new ConnectionFactory()
+                {
+                    HostName = settings.Hostname,
+                    UserName = settings.Username,
+                    Password = settings.Password,
+                    Port = AmqpTcpEndpoint.UseDefaultPort,
+                    ClientProvidedName = Environment.MachineName + "_" + Guid.NewGuid().ToString(),
+                    RequestedHeartbeat = TimeSpan.FromSeconds(60)
+                };
+            });
 
 
             services.AddScoped<ProjectDSInterface, ProjectInfrastructure>();
@@ -38,9 +57,13 @@ namespace Board_service
 
             //Service layer
             services.AddScoped<ProjectHandler>();
-            services.AddScoped<InviteLinkHandler>();
-            services.AddSingleton<ProjectSyncHandler>();
+            services.AddScoped<InviteLinkHandler>(); 
+            services.AddSingleton<RabbitMQPersistentConnection>();
 
+            services.AddSingleton<ProjectSyncPublisher>();
+
+            //hosted consumers
+            services.AddHostedService<ProjectSyncConsumer>();
 
 
             services.AddSwaggerGen(c =>
@@ -61,6 +84,7 @@ namespace Board_service
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            //app.UseAntiforgery();
 
             app.UseExceptionHandler();
 

@@ -5,6 +5,10 @@ using Microsoft.Extensions.Hosting;
 using Serilog.Enrichers;
 using Serilog.Configuration;
 using Serilog.Events;
+using Sentry;
+using Sentry.Serilog;
+using Sentry.Extensions.Logging;
+using static System.Net.WebRequestMethods;
 
 namespace Board_service.Handler.CustomExtensions
 {
@@ -26,11 +30,24 @@ namespace Board_service.Handler.CustomExtensions
                         .Enrich.WithRequestHeader("x-forwarded-for")
                         .Enrich.WithRequestHeader("HTTP_CLIENT_IP")
                         .Enrich.WithRequestHeader(HeaderNames.UserAgent)
-                        .WriteTo.Console();
+                        .WriteTo.Console()
+                        .WriteTo.Sentry(o =>
+                        {
+                            o.MinimumBreadcrumbLevel = LogEventLevel.Information;
+                            o.MinimumEventLevel = LogEventLevel.Error;
+                            o.Dsn = "http://13145c9001224ae8b9c6e673ed4ad6d5@localhost:9000/2";
+                            o.SendDefaultPii = true;
+                        });
                 }
             );
-
             return hostBuilder;
         }
+        public static IHostBuilder UseSentry(this IHostBuilder builder) =>
+            builder.ConfigureLogging((context, logging) =>
+            {
+                var section = context.Configuration.GetRequiredSection("Sentry");
+                logging.Services.Configure<SentryLoggingOptions>(section);
+                logging.AddSentry();
+            });
     }
 }
