@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using InfraRabbitMQ.Object;
 using RabbitMQ.Client;
 
 namespace InfraRabbitMQ.Handler.DataSync
@@ -43,9 +44,9 @@ namespace InfraRabbitMQ.Handler.DataSync
         {
             Thread.Sleep(1000);
             byte[] body = e.Body.ToArray();
-            var JsonProject = Encoding.UTF8.GetString(body);
+            var JsonMessage = Encoding.UTF8.GetString(body);
 
-            ProjectDTO Project = Newtonsoft.Json.JsonConvert.DeserializeObject<ProjectDTO>(JsonProject);
+            RabbitMQMessageObject messsage = Newtonsoft.Json.JsonConvert.DeserializeObject<RabbitMQMessageObject>(JsonMessage);
 
             Console.WriteLine("Received object");
 

@@ -11,6 +11,7 @@ using ProjectService.Interface;
 using InfraRabbitMQ;
 using InfraRabbitMQ.Handler.DataSync;
 using Microsoft.Extensions.Options;
+using ProjectService.DataSyncManagement;
 using RabbitMQ.Client;
 
 namespace Board_service
@@ -52,12 +53,17 @@ namespace Board_service
 
             services.AddScoped<ProjectDSInterface, ProjectInfrastructure>();
             services.AddScoped<InviteDSInterface, InviteLinkInfrastructure>();
-            
+
+            services.AddScoped<ProjectSyncInterface, ProjectInfrastructure>();
+
 
 
             //Service layer
             services.AddScoped<ProjectHandler>();
-            services.AddScoped<InviteLinkHandler>(); 
+            services.AddScoped<InviteLinkHandler>();
+
+            services.AddScoped<ProjectSyncManagment>();
+
             services.AddSingleton<RabbitMQPersistentConnection>();
 
             services.AddSingleton<ProjectSyncPublisher>();

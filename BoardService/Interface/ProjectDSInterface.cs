@@ -22,7 +22,7 @@ namespace ProjectService.Interface
         public Task<List<ProjectDTO>> GetActiveProjects(string UserId);
         public Task<List<ProjectDTO>> GetProjectArchived(string UserId);
         public Task<DateTime> GetProjectDeletedDate(string ProjectId);
-        public Task<ProjectDTO> GetProject(string ProjectId, string UserId);
+        public Task<ProjectDTO> GetProject(string ProjectId);
         public Task<List<ProjectDTO>> GetProjects(string UserId);
         public Task<SmallProjectDTO> GetSmallProject(string ProjectId);
         public Task<List<SmallProjectDTO>> GetSmallProjects(string UserId);

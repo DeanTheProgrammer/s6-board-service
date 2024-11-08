@@ -7,6 +7,7 @@ using DTO.DTO_s.InviteLink;
 using DTO.Enum;
 using Microsoft.Extensions.Logging;
 using InfraRabbitMQ.Handler.DataSync;
+using InfraRabbitMQ.Object;
 
 namespace ProjectService.Handler
 {
@@ -31,15 +32,21 @@ namespace ProjectService.Handler
             }
 
             string Id = await _ProjectDsInterface.CreateProject(UserId, Project);
-            ProjectDTO result = await _ProjectDsInterface.GetProject(Id, UserId);
+            ProjectDTO result = await _ProjectDsInterface.GetProject(Id);
+            
+            _syncHandler.PublishProjectSync(result, RabbitMQMessageCrudEnum.Add, UserId);
+
 
             return result;
         }
 
         public async Task<ProjectDTO> GetProject(string ProjectId, string UserId)
         {
-            ProjectDTO project = await _ProjectDsInterface.GetProject(ProjectId, UserId);
-            _syncHandler.PublishSyncObject(project);
+            ProjectDTO project = await _ProjectDsInterface.GetProject(ProjectId);
+            if (!project.Users.Any(U => U.Id == UserId))
+            {
+                throw new UnauthorizedAccessException("You don't have access to this project");
+            }
             return project;
         }
 

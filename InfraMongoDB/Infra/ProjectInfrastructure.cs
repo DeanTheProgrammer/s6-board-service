@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 using CustomExceptions.ObjectExceptions;
 using DTO;
+using DTO.DTO_s.InviteLink;
 using DTO.DTO_s.Project;
 using InfraMongoDB.Transform;
 using MongoDB.Driver;
@@ -13,7 +14,7 @@ using Microsoft.Extensions.Options;
 
 namespace InfraMongoDB.Infra
 {
-    public class ProjectInfrastructure : ProjectDSInterface
+    public class ProjectInfrastructure : ProjectDSInterface, ProjectSyncInterface
     {
         private readonly IMongoCollection<ProjectModel> _ProjectCollection;
 
@@ -26,9 +27,22 @@ namespace InfraMongoDB.Infra
             _ProjectCollection = database.GetCollection<ProjectModel>("Project");
         }
 
-        public Task AddUserToProject(string ProjectId, UserDTO User)
+        public async Task AddUserToProject(string ProjectId, UserDTO User)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(ProjectId))
+            {
+                throw new ValidationException("ProjectId cannot be null");
+            }
+
+            ProjectModel Project =  await _ProjectCollection.Find(b => b.Id == ObjectId.Parse(ProjectId)).FirstOrDefaultAsync();
+            if (Project == null)
+            {
+                throw new NotFoundException("Project not found");
+            }
+
+            Project.Users.Add(Transform.ProjectTransform.ToModel(User));
+
+            await _ProjectCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(ProjectId), Project);
         }
 
         public async Task<string> CreateProject(string UserId, CreateProjectDTO input)
@@ -64,6 +78,13 @@ namespace InfraMongoDB.Infra
             return NewProject.Id.ToString();
         }
 
+        public async Task CreateProject(ProjectDTO Project)
+        {
+            ProjectModel NewProject = Transform.ProjectTransform.ToModel(Project);
+
+            await _ProjectCollection.InsertOneAsync(NewProject);
+        }
+
         public async Task DeleteProject(string UserId, string ProjectId)
         {
             ProjectModel Project = await _ProjectCollection.Find(b => b.Id == ObjectId.Parse(ProjectId)).FirstOrDefaultAsync();
@@ -79,6 +100,19 @@ namespace InfraMongoDB.Infra
             await _ProjectCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(ProjectId), Project);
         }
 
+        public async Task DeleteProject(string ProjectId, DateTime DeleteTime, string UserId)
+        {
+            ProjectModel Project = await _ProjectCollection.Find(b => b.Id == ObjectId.Parse(ProjectId)).FirstOrDefaultAsync();
+            if (Project == null)
+            {
+                throw new NotFoundException("Project is not found");
+            }
+            Project.IsDeleted = true;
+            Project.DeletedAt = DeleteTime;
+            Project.DeletedBy = UserId;
+            await _ProjectCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(ProjectId), Project);
+        }
+
         public async Task<List<ProjectDTO>> GetActiveProjects(string UserId)
         {
             List<ProjectModel> Projects = await _ProjectCollection.Find(b => b.Users.Any(u => u.Id == UserId) && b.IsDeleted == false).ToListAsync();
@@ -91,10 +125,17 @@ namespace InfraMongoDB.Infra
             return result;
         }
 
-        public async Task<ProjectDTO> GetProject(string ProjectId, string UserId)
+        public async Task<ProjectDTO> GetProject(string ProjectId)
         {
-            ProjectModel result = await _ProjectCollection.Find(b => b.Id == ObjectId.Parse(ProjectId) && b.Users.Any(u => u.Id == UserId)).FirstOrDefaultAsync();
-            return Transform.ProjectTransform.ToDTO(result);
+            ProjectModel result = await _ProjectCollection.Find(b => b.Id == ObjectId.Parse(ProjectId)).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return null;
+            }
+            else
+            {
+                return Transform.ProjectTransform.ToDTO(result);
+            }
         }
 
         public async Task<List<ProjectDTO>> GetProjectArchived(string UserId)
@@ -187,6 +228,12 @@ namespace InfraMongoDB.Infra
 
             await _ProjectCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(ProjectId), NewProject);
 
+        }
+
+        public async Task UpdateProject(ProjectDTO Project)
+        {
+            ProjectModel UpdateModel = Transform.ProjectTransform.ToModel(Project);
+            await _ProjectCollection.ReplaceOneAsync(b => b.Id == ObjectId.Parse(Project.Id), UpdateModel);
         }
 
         public async Task UpdateUserRole(string ProjectId, string UserId, DTO.Enum.ProjectRoleEnum Role)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DTO;
+using DTO.DTO_s.InviteLink;
 using DTO.DTO_s.Project;
 using DTO.Enum;
 using Models.Models;
@@ -41,6 +42,18 @@ namespace InfraMongoDB.Transform
                 });
             }
 
+            return result;
+        }
+
+        public static UserModel ToModel(UserDTO User)
+        {
+            UserModel result = new UserModel()
+            {
+                Id = User.Id,
+                Role = (Models.Enum.ProjectRoleEnum)User.Role,
+                Nickname = User.Nickname,
+                TeamRole = User.TeamRole
+            };
             return result;
         }
 
