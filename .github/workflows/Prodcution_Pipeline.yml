@@ -23,7 +23,7 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
   Deploy:
-    name: Push Docker image to Docker Hub
+    name: Deploy to Docker hub
     needs: build
     runs-on: ubuntu-latest
     steps:
