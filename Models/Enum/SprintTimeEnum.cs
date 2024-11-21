@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace Models.Enum
 {
-    public enum BoardRoleEnum
+    public enum SprintTimeEnum
     {
-        Admin = 2,
-        Member = 1,
-        Viewer = 0
+        None = 0,
+        OneWeek = 1,
+        TwoWeek = 2,
+        ThreeWeek = 3,
+        FourWeek = 4,
+        Custom = 5
     }
 }

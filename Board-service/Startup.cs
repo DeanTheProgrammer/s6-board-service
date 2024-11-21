@@ -1,6 +1,4 @@
-﻿using BoardService.Handler;
-using BoardService.Interface;
-using InfraMongoDB;
+﻿using InfraMongoDB;
 using InfraMongoDB.Infra;
 using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
@@ -8,6 +6,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Net;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectService.Handler;
+using ProjectService.Interface;
+using InfraRabbitMQ;
+using InfraRabbitMQ.Handler.DataSync;
+using Microsoft.Extensions.Options;
+using ProjectService.DataSyncManagement;
+using RabbitMQ.Client;
 
 namespace Board_service
 {
@@ -22,26 +27,54 @@ namespace Board_service
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
+
+            services.AddHttpContextAccessor();
             services.AddProblemDetails();
             services.AddExceptionHandler<Board_service.Handler.ExceptionHandler.ExceptionHandler>();
 
+            //All settings
             services.Configure<MongoDBSettings>(Configuration.GetSection(MongoDBSettings.Settings));
+            services.Configure<RabbitMQSettings>(Configuration.GetSection(RabbitMQSettings.Settings));
+
+            services.AddSingleton<IConnectionFactory>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<RabbitMQSettings>>().Value;
+                return new ConnectionFactory()
+                {
+                    HostName = settings.Hostname,
+                    UserName = settings.Username,
+                    Password = settings.Password,
+                    Port = AmqpTcpEndpoint.UseDefaultPort,
+                    ClientProvidedName = Environment.MachineName + "_" + Guid.NewGuid().ToString(),
+                    RequestedHeartbeat = TimeSpan.FromSeconds(60)
+                };
+            });
 
 
-            services.AddScoped<BoardDSInterface, BoardInfrastructure>();
+            services.AddScoped<ProjectDSInterface, ProjectInfrastructure>();
             services.AddScoped<InviteDSInterface, InviteLinkInfrastructure>();
-            
+
+            services.AddScoped<ProjectSyncInterface, ProjectInfrastructure>();
+
 
 
             //Service layer
-            services.AddScoped<BoardHandler>();
+            services.AddScoped<ProjectHandler>();
             services.AddScoped<InviteLinkHandler>();
 
+            services.AddScoped<ProjectSyncManagment>();
+
+            services.AddSingleton<RabbitMQPersistentConnection>();
+
+            services.AddSingleton<ProjectSyncPublisher>();
+
+            //hosted consumers
+            services.AddHostedService<ProjectSyncConsumer>();
 
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Board_service", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Project service", Version = "v1" });
             });
         }
         
@@ -57,6 +90,7 @@ namespace Board_service
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            //app.UseAntiforgery();
 
             app.UseExceptionHandler();
 

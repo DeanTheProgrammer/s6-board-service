@@ -6,24 +6,30 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Board_service</RootNamespace>
     <UserSecretsId>290df159-3d50-46ae-a7f6-10c0a0ccb001</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog" Version="4.0.2" />
-    <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Sentry" Version="4.13.0" />
+    <PackageReference Include="Sentry.Extensions.Logging" Version="4.13.0" />
+    <PackageReference Include="Sentry.Serilog" Version="4.13.0" />
+    <PackageReference Include="Serilog" Version="4.1.0" />
+    <PackageReference Include="Serilog.Enrichers.ClientInfo" Version="2.1.2" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BoardService\BoardService.csproj" />
+    <ProjectReference Include="..\BoardService\ProjectService.csproj" />
     <ProjectReference Include="..\CustomExceptions\CustomExceptions.csproj" />
     <ProjectReference Include="..\DTO\DTO.csproj" />
     <ProjectReference Include="..\InfraMongoDB\InfraMongoDB.csproj" />
+    <ProjectReference Include="..\InfraRabbitMQ\InfraRabbitMQ.csproj" />
   </ItemGroup>
 
 </Project>

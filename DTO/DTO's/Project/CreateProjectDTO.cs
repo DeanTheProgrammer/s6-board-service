@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTO.DTO_s.Board
+namespace DTO.DTO_s.Project
 {
-    public class CreateBoardDTO
+    public class CreateProjectDTO
     {
         public string Name { get; set; }
         public string Description { get; set; }

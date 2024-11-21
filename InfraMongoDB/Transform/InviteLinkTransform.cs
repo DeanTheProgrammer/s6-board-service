@@ -15,10 +15,10 @@ namespace InfraMongoDB.Transform
             return new DTO.DTO_s.InviteLink.InviteLinkDTO()
             {
                 Id = model.Id.ToString(),
-                BoardId = model.BoardId,
+                ProjectId = model.ProjectId,
                 LinkCode = model.LinkCode,
                 CreatedBy = model.CreatedBy,
-                ReceivingRole = (BoardRoleEnum)model.ReceivingRole,
+                ReceivingRole = (ProjectRoleEnum)model.ReceivingRole,
                 CreatedAt = model.CreatedAt,
                 ExpiresAt = model.ExpiresAt
             };
@@ -29,10 +29,10 @@ namespace InfraMongoDB.Transform
             return new Models.Models.InviteLinkModel()
             {
                 Id = new MongoDB.Bson.ObjectId(dto.Id),
-                BoardId = dto.BoardId,
+                ProjectId = dto.ProjectId,
                 LinkCode = dto.LinkCode,
                 CreatedBy = dto.CreatedBy,
-                ReceivingRole = (Models.Enum.BoardRoleEnum)dto.ReceivingRole,
+                ReceivingRole = (Models.Enum.ProjectRoleEnum)dto.ReceivingRole,
                 CreatedAt = dto.CreatedAt,
                 ExpiresAt = dto.ExpiresAt
             };
@@ -43,9 +43,9 @@ namespace InfraMongoDB.Transform
             return new DTO.DTO_s.InviteLink.OpenInviteLinkDTO()
             {
                 Id = model.Id.ToString(),
-                BoardId = model.BoardId,
+                ProjectId = model.ProjectId,
                 CreatedBy = model.CreatedBy,
-                ReceivingRole = (BoardRoleEnum)model.ReceivingRole,
+                ReceivingRole = (ProjectRoleEnum)model.ReceivingRole,
                 CreatedAt = model.CreatedAt,
                 ExpiresAt = model.ExpiresAt
             };

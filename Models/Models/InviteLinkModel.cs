@@ -13,14 +13,14 @@ namespace Models.Models
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        [BsonElement("BoardId")]
-        public string BoardId { get; set; }
+        [BsonElement("ProjectId")]
+        public string ProjectId { get; set; }
         [BsonElement("LinkCode")]
         public string LinkCode { get; set; }
         [BsonElement("CreatedBy")]
         public string CreatedBy { get; set; }
         [BsonElement("ReceivingRole")]
-        public BoardRoleEnum ReceivingRole { get; set; }
+        public ProjectRoleEnum ReceivingRole { get; set; }
         [BsonElement("CreatedAt")]
         public DateTime CreatedAt { get; set; }
         [BsonElement("ExpiresAt")]

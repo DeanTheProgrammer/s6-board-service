@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BoardService.Interface;
+using ProjectService.Interface;
 using DTO.DTO_s.InviteLink;
 using InfraMongoDB.Transform;
 using Microsoft.Extensions.Options;
@@ -36,10 +36,10 @@ namespace InfraMongoDB.Infra
 
             InviteLinkModel NewInvite = new InviteLinkModel()
             {
-                BoardId = Invite.BoardId,
+                ProjectId = Invite.ProjectId,
                 LinkCode = Invite.LinkCode,
                 CreatedBy = Invite.CreatedBy,
-                ReceivingRole = (BoardRoleEnum)Invite.ReceivingRole,
+                ReceivingRole = (ProjectRoleEnum)Invite.ReceivingRole,
                 CreatedAt = Invite.CreatedAt,
                 ExpiresAt = Invite.ExpiresAt
             };
@@ -54,11 +54,11 @@ namespace InfraMongoDB.Infra
             throw new NotImplementedException();
         }
 
-        public async Task<List<InviteLinkDTO>> GetInviteLinkByBoardId(string BoardId)
+        public async Task<List<InviteLinkDTO>> GetInviteLinkByProjectId(string ProjectId)
         {
             List<InviteLinkDTO> result = new List<InviteLinkDTO>();
 
-            List<InviteLinkModel> inviteLinks = await _InviteLinkCollection.Find(i => i.BoardId == BoardId).ToListAsync();
+            List<InviteLinkModel> inviteLinks = await _InviteLinkCollection.Find(i => i.ProjectId == ProjectId).ToListAsync();
 
             foreach (InviteLinkModel invite in inviteLinks)
             {
@@ -80,10 +80,10 @@ namespace InfraMongoDB.Infra
             return Transform.InviteLinkTransform.ToDTO(inviteLink);
         }
 
-        public async Task<List<OpenInviteLinkDTO>> GetPublicInviteLinkByBoardId(string BoardId)
+        public async Task<List<OpenInviteLinkDTO>> GetPublicInviteLinkByProjectId(string ProjectId)
         {
             List<InviteLinkModel> inviteLinks =
-                await _InviteLinkCollection.Find(i => i.BoardId == BoardId).ToListAsync();
+                await _InviteLinkCollection.Find(i => i.ProjectId == ProjectId).ToListAsync();
 
             List<OpenInviteLinkDTO> result = new List<OpenInviteLinkDTO>();
             foreach (InviteLinkModel inviteLink in inviteLinks)

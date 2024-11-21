@@ -1,82 +1,81 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
-using BoardService.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using BoardService.Handler;
 using DTO;
-using DTO.DTO_s.Board;
+using DTO.DTO_s.Project;
 using DTO.DTO_s.InviteLink;
+using ProjectService.Handler;
 
 namespace Board_service.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class BoardController : ControllerBase
+    public class ProjectController : ControllerBase
     {
-        private readonly BoardHandler _board;
+        private readonly ProjectHandler _board;
         private readonly string _userId = "TestUserId";
-        private readonly ILogger<BoardController> _logger;
+        private readonly ILogger<ProjectController> _logger;
         private readonly InviteLinkHandler _inviteLinkHandler;
 
-        public BoardController(BoardHandler board, ILogger<BoardController> logger)
+        public ProjectController(ProjectHandler board, ILogger<ProjectController> logger)
         {
             _board = board;
             _logger = logger;
         }
 
         [HttpPost("create")]
-        [ProducesResponseType(typeof(BoardDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProjectDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<BoardDTO> CreateBoard(CreateBoardDTO Board)
+        public async Task<ProjectDTO> CreateProject(CreateProjectDTO Board)
         {
             if (string.IsNullOrEmpty(Board.Name))
             {
                 throw new ValidationException("Name cannot be null");
             }
 
-            var Result = await _board.CreateBoard(_userId, Board);
+            var Result = await _board.CreateProject(_userId, Board);
             return Result;
         }
 
         [HttpGet("get")]
-        [ProducesResponseType(typeof(BoardDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProjectDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<BoardDTO> GetBoard(string BoardId)
+        public async Task<ProjectDTO> GetProject(string BoardId)
         {
-            var Result = await _board.GetBoard(BoardId, _userId);
+            var Result = await _board.GetProject(BoardId, _userId);
             return Result;
         }
 
         [HttpGet("getall")]
-        [ProducesResponseType(typeof(List<BoardDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ProjectDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<BoardDTO>> GetBoards()
+        public async Task<List<ProjectDTO>> GetProjects()
         {
-            var Result = await _board.GetBoards(_userId);
+            var Result = await _board.GetProjects(_userId);
             return Result;
         }
 
         [HttpGet("getsmall")]
-        [ProducesResponseType(typeof(SmallBoardDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(SmallProjectDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<SmallBoardDTO> GetSmallBoard(string BoardId)
+        public async Task<SmallProjectDTO> GetSmallProject(string BoardId)
         {
-            var Result = await _board.GetSmallBoard(BoardId);
+            var Result = await _board.GetSmallProject(BoardId);
             return Result;
         }
 
         [HttpGet("getallsmall")]
-        [ProducesResponseType(typeof(List<SmallBoardDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<SmallProjectDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<List<SmallBoardDTO>> GetSmallBoards()
+        public async Task<List<SmallProjectDTO>> GetSmallProjects()
         {
-            var Result = await _board.GetSmallBoards(_userId);
+            var Result = await _board.GetSmallProjects(_userId);
             return Result;
         }
     }
