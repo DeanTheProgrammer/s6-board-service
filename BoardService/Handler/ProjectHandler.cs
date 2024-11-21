@@ -33,9 +33,6 @@ namespace ProjectService.Handler
 
             string Id = await _ProjectDsInterface.CreateProject(UserId, Project);
             ProjectDTO result = await _ProjectDsInterface.GetProject(Id);
-            
-            _syncHandler.PublishProjectSync(result, RabbitMQMessageCrudEnum.Add, UserId);
-
 
             return result;
         }

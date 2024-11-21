@@ -23,8 +23,7 @@ namespace Board_service.Handler.StartupHandler
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .AddAppLogging()
-                .UseSentry();
+                .AddAppLogging();
         }
     }
 }
