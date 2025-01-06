@@ -10,6 +10,7 @@ using ProjectService.Handler;
 using ProjectService.Interface;
 using InfraRabbitMQ;
 using InfraRabbitMQ.Handler.DataSync;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using ProjectService.DataSyncManagement;
 using RabbitMQ.Client;
@@ -35,6 +36,18 @@ namespace Board_service
             //All settings
             services.Configure<MongoDBSettings>(Configuration.GetSection(MongoDBSettings.Settings));
             services.Configure<RabbitMQSettings>(Configuration.GetSection(RabbitMQSettings.Settings));
+
+            services.AddCors(options =>
+                {
+                    options.AddDefaultPolicy(policy =>
+                        {
+                            policy.AllowAnyHeader();
+                            policy.AllowAnyMethod();
+                            policy.AllowAnyOrigin();
+                        }
+                    );
+                }
+            );
 
             services.AddSingleton<IConnectionFactory>(sp =>
             {
@@ -71,7 +84,6 @@ namespace Board_service
             //hosted consumers
             services.AddHostedService<ProjectSyncConsumer>();
 
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Project service", Version = "v1" });
@@ -86,6 +98,7 @@ namespace Board_service
                 app.UseSwaggerUI();
             }
 
+            app.UseCors();
             app.UseRouting();
             app.UseHttpsRedirection();
 
