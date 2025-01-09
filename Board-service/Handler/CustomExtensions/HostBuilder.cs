@@ -25,9 +25,9 @@ namespace Board_service.Handler.StartupHandler
                     {
                         if (context.HostingEnvironment.IsProduction())
                         {
-                            options.ListenAnyIP(8081,
-                                listenOptions => { listenOptions.UseHttps("certhttps.pfx", "Password123"); });
-                            options.ListenAnyIP(8080);
+                            //options.ListenAnyIP(8081,
+                            //    listenOptions => { listenOptions.UseHttps("certhttps.pfx", "Password123"); });
+                            //options.ListenAnyIP(8080);
                         }
                     });
                     webBuilder.UseStartup<Startup>();
