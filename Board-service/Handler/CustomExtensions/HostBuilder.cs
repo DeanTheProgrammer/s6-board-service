@@ -21,6 +21,15 @@ namespace Board_service.Handler.StartupHandler
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureKestrel((context, options) =>
+                    {
+                        if (context.HostingEnvironment.IsProduction())
+                        {
+                            options.ListenAnyIP(8081,
+                                listenOptions => { listenOptions.UseHttps("certhttps.pfx", "Password123"); });
+                            options.ListenAnyIP(8080);
+                        }
+                    });
                     webBuilder.UseStartup<Startup>();
                 })
                 .AddAppLogging();

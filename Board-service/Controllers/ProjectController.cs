@@ -11,7 +11,7 @@ using ProjectService.Handler;
 namespace Board_service.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class ProjectController : ControllerBase
     {
         private readonly ProjectHandler _board;

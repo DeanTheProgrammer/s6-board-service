@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Board_service.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class InviteLinkController : Controller
     {
         private readonly InviteLinkHandler _handler;
