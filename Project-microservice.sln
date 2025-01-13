@@ -8,6 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{812EA606-98DD-4E2F-95F2-7E94E297DBDA}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		Dockerfile = Dockerfile
+		.github\workflows\On_Pull_Request.yml = .github\workflows\On_Pull_Request.yml
+		.github\workflows\Prodcution_Pipeline.yml = .github\workflows\Prodcution_Pipeline.yml
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -21,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraMongoDB", "InfraMongoD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomExceptions", "CustomExceptions\CustomExceptions.csproj", "{D5BC27F3-6896-44A7-B723-97B28A975900}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfraRabbitMQ", "InfraRabbitMQ\InfraRabbitMQ.csproj", "{649B8C90-3741-4C31-A170-4FC0124D6532}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InfraRabbitMQ", "InfraRabbitMQ\InfraRabbitMQ.csproj", "{649B8C90-3741-4C31-A170-4FC0124D6532}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

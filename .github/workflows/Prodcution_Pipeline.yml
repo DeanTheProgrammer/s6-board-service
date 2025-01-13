@@ -44,4 +44,17 @@ jobs:
           context: .
           push: true
           tags: deantheprogrammer/s6-project-service:latest
+  Kub:
+    name: Kubernetes update
+    needs: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kubernetes set context
+        uses: Azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.KUBERNETES_CONFIG }}
+      - name: Deploy
+        run: |
+          kubectl rollout restart -n deanban deployment project-app
   
